@@ -37,7 +37,7 @@ def send_notification_email(project_data):
         Client Name: {project_data['userName']}
         Username: {project_data['username']}
         Email: {project_data['userEmail']}
-        Phone: {project_data['userPhone']}
+        Phone: {project_data.get('userPhone', 'Not provided')}
         
         Website Name: {project_data['websiteName']}
         Website Type: {project_data['websiteType']}
@@ -75,6 +75,7 @@ def send_notification_email(project_data):
         return False
 
 def load_projects():
+    """Load projects from JSON file"""
     if os.path.exists(PROJECTS_FILE):
         try:
             with open(PROJECTS_FILE, 'r') as f:
@@ -84,10 +85,12 @@ def load_projects():
     return []
 
 def save_projects(projects):
+    """Save projects to JSON file"""
     with open(PROJECTS_FILE, 'w') as f:
         json.dump(projects, f, indent=2)
 
 def load_users():
+    """Load users from JSON file"""
     if os.path.exists(USERS_FILE):
         try:
             with open(USERS_FILE, 'r') as f:
@@ -100,10 +103,12 @@ def load_users():
         return []
 
 def save_users(users):
+    """Save users to JSON file"""
     with open(USERS_FILE, 'w') as f:
         json.dump(users, f, indent=2)
 
 def generate_project_id(full_name):
+    """Generate unique project ID based on user name"""
     names = full_name.upper().split()
     if len(names) >= 2:
         first_part = names[0][:3] if len(names[0]) >= 3 else names[0].ljust(3, 'X')
@@ -116,17 +121,28 @@ def generate_project_id(full_name):
     return f"{base_id}{timestamp}"
 
 def count_previous_edits(project_id_prefix, projects):
+    """Count previous edits for a user"""
     count = 0
     for project in projects:
         if project['id'].startswith(project_id_prefix):
             count += 1
     return count
 
+# ==================== ROUTES ====================
+
 @app.route('/')
 def index():
-    # Clear any existing session to ensure fresh start
+    """Main homepage"""
+    # Ensure data files exist
+    if not os.path.exists(PROJECTS_FILE):
+        save_projects([])
+    if not os.path.exists(USERS_FILE):
+        save_users([])
+        
+    # Clear any existing session to ensure fresh start (only if not logged in)
     if not session.get('user_id') and not session.get('admin_logged_in'):
         session.clear()
+        
     user_name = session.get('user_name')
     user_email = session.get('user_email')
     username = session.get('username')
@@ -134,6 +150,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """User login route"""
     # Clear session when accessing login page
     if request.method == 'GET':
         session.clear()
@@ -147,7 +164,7 @@ def login():
             session.clear()
             session['admin_logged_in'] = True
             session['admin_name'] = "Admin"
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin_dashboard'))
         
         # Check user login
         users = load_users()
@@ -162,7 +179,7 @@ def login():
             session['user_id'] = user.get('id')
             session['user_name'] = user.get('name')
             session['user_email'] = user.get('email')
-            session['user_phone'] = user.get('phone')
+            session['user_phone'] = user.get('phone', '')
             session['username'] = user.get('username')
             return redirect(url_for('index'))
         else:
@@ -172,20 +189,21 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    """User registration route"""
     if request.method == 'POST':
         name = request.form.get('name')
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        phone = request.form.get('phone')
+        phone = request.form.get('phone', '')
         
-        if not name or not username or not email or not password or not phone:
+        if not name or not username or not email or not password:
             return render_template('signup.html', error='All fields are required')
         
         if not email.endswith('@gmail.com'):
             return render_template('signup.html', error='Only Gmail addresses are accepted')
         
-        if not re.match(r'^\d{10}$', phone):
+        if phone and not re.match(r'^\d{10}$', phone):
             return render_template('signup.html', error='Phone number must be 10 digits')
         
         users = load_users()
@@ -224,17 +242,22 @@ def signup():
 
 @app.route('/logout')
 def logout():
+    """Logout route for users"""
     session.clear()
     return redirect(url_for('index'))
 
 @app.route('/admin')
-def admin():
+def admin_dashboard():
+    """Admin dashboard"""
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-    return render_template('admin.html')
+    
+    projects = load_projects()
+    return render_template('admin.html', projects=projects)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
+    """Admin login route"""
     if request.method == 'GET':
         session.clear()
     
@@ -246,7 +269,7 @@ def admin_login():
             session.clear()
             session['admin_logged_in'] = True
             session['admin_name'] = "Admin"
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin_dashboard'))
         else:
             return render_template('admin_login.html', error='Invalid credentials')
     
@@ -254,12 +277,13 @@ def admin_login():
 
 @app.route('/admin/logout')
 def admin_logout():
+    """Admin logout route"""
     session.clear()
     return redirect(url_for('index'))
 
-# Success page route
 @app.route('/success/<project_id>')
 def success(project_id):
+    """Success page after project submission"""
     if not session.get('user_id'):
         return redirect(url_for('login'))
     
@@ -271,9 +295,11 @@ def success(project_id):
     
     return render_template('success.html', project=project)
 
-# API Routes
+# ==================== API ROUTES ====================
+
 @app.route('/api/projects', methods=['POST'])
 def create_project():
+    """Create new project"""
     try:
         if not session.get('user_id'):
             return jsonify({'error': 'Please login first'}), 401
@@ -364,6 +390,7 @@ def create_project():
 
 @app.route('/api/projects', methods=['GET'])
 def get_all_projects():
+    """Get all projects (admin only)"""
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'Unauthorized'}), 401
     projects = load_projects()
@@ -371,6 +398,7 @@ def get_all_projects():
 
 @app.route('/api/projects/user', methods=['GET'])
 def get_user_projects():
+    """Get projects for current user"""
     if not session.get('user_id'):
         return jsonify({'error': 'Please login first'}), 401
     
@@ -380,6 +408,7 @@ def get_user_projects():
 
 @app.route('/api/projects/<project_id>', methods=['GET'])
 def get_project(project_id):
+    """Get specific project"""
     projects = load_projects()
     project = next((p for p in projects if p.get('id') == project_id), None)
     if project:
@@ -389,6 +418,7 @@ def get_project(project_id):
 
 @app.route('/api/projects/<project_id>', methods=['PUT'])
 def update_project(project_id):
+    """Update project (admin only)"""
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'Unauthorized'}), 401
         
@@ -412,6 +442,7 @@ def update_project(project_id):
 
 @app.route('/api/projects/<project_id>/bill', methods=['POST'])
 def generate_bill(project_id):
+    """Generate bill for project (admin only)"""
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'Unauthorized'}), 401
         
@@ -435,6 +466,7 @@ def generate_bill(project_id):
 
 @app.route('/api/projects/<project_id>/payment', methods=['POST'])
 def update_payment(project_id):
+    """Update payment status (admin only)"""
     if not session.get('admin_logged_in'):
         return jsonify({'error': 'Unauthorized'}), 401
         
@@ -461,9 +493,9 @@ def update_payment(project_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Health check route
 @app.route('/health')
 def health_check():
+    """Health check endpoint"""
     return jsonify({'status': 'healthy', 'message': 'Innovators United API is running'})
 
 if __name__ == '__main__':
