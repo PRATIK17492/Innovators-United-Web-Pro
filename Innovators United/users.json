@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "gavish",
+    "username": "gavish",
+    "email": "qwert1714@gmail.com",
+    "password": "12",
+    "phone": "9448049572",
+    "created_at": "2025-10-24T21:15:18.740943"
+  },
+  {
+    "id": 2,
+    "name": "preetam",
+    "username": "preetam",
+    "email": "pratikpreetam1714@gmail.com",
+    "password": "2313",
+    "phone": "9448049572",
+    "created_at": "2025-10-24T23:12:28.421159"
+  },
+  {
+    "id": 3,
+    "name": "Pratik",
+    "username": "Pratik",
+    "email": "pratikpreetam1714@gmail.com",
+    "password": "pratik",
+    "phone": "9448049572",
+    "created_at": "2025-10-25T15:56:49.371474"
+  },
+  {
+    "id": 4,
+    "name": "Pratik. K",
+    "username": "Preetam",
+    "email": "pratikpreetam1714@gmail.com",
+    "password": "qwert",
+    "phone": "9448049572",
+    "created_at": "2025-10-25T17:42:31.270527"
+  }
+]

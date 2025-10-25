@@ -1,0 +1,839 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovators United Web Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Fix for navbar spacing */
+        .navbar {
+            min-height: 60px;
+            height: 60px;
+        }
+        
+        .nav-container {
+            padding: 0.5rem 2rem;
+            height: 60px;
+        }
+        
+        main {
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .nav-user {
+            gap: 0.5rem;
+        }
+        
+        .user-welcome {
+            font-size: 0.9rem;
+        }
+        
+        .nav-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+        
+        /* Ensure content is visible */
+        .hero-section {
+            min-height: calc(100vh - 60px);
+        }
+        
+        .page-section {
+            padding-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-rocket"></i>
+                <span>Innovators United</span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-link active" onclick="showSection('home')">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('our-work')">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Our Work</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('project-form')">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Start Project</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('my-projects')">
+                    <i class="fas fa-tasks"></i>
+                    <span>My Projects</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('contact')">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+            </div>
+
+            <div class="nav-auth" id="authButtons">
+                <a href="/login" class="nav-btn nav-btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+                <a href="/signup" class="nav-btn nav-btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign Up</span>
+                </a>
+            </div>
+
+            <div class="nav-user" id="userInfo" style="display: none;">
+                <div class="user-welcome">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Welcome, <strong id="userNameDisplay">{{ username if username else 'User' }}</strong></span>
+                </div>
+                <a href="/logout" class="nav-btn nav-btn-outline">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Home Section -->
+        <section class="page-section active" id="home">
+            <div class="hero-section">
+                <div class="hero-background"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fas fa-star"></i>
+                        <span>Premium Web Development Services</span>
+                    </div>
+                    <h1 class="hero-title">Transform Your Ideas Into Stunning Websites</h1>
+                    <p class="hero-description">Professional website development with cutting-edge technology, responsive design, and exceptional user experience.</p>
+                    
+                    <div class="hero-actions">
+                        <a href="#" class="btn btn-primary btn-hero" onclick="showSection('project-form')">
+                            <i class="fas fa-rocket"></i>
+                            Start Your Project
+                        </a>
+                        <a href="#" class="btn btn-outline btn-hero" onclick="showSection('our-work')">
+                            <i class="fas fa-eye"></i>
+                            View Our Work
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Projects Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Client Satisfaction</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Why Choose Us?</h2>
+                        <p class="section-subtitle">We deliver exceptional web solutions that drive results</p>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3>Fast Delivery</h3>
+                            <p>Get your website delivered in record time with our efficient development process</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Secure & Reliable</h3>
+                            <p>Enterprise-grade security and reliable hosting for your peace of mind</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h3>Responsive Design</h3>
+                            <p>Perfectly optimized for all devices - desktop, tablet, and mobile</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h3>24/7 Support</h3>
+                            <p>Round-the-clock support to help you with any issues or questions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Work Section -->
+        <section class="page-section" id="our-work">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Our Portfolio</h2>
+                    <p class="section-subtitle">Check out some of our recent projects</p>
+                </div>
+
+                <div class="portfolio-grid">
+                    <div class="portfolio-card">
+                        <div class="portfolio-image">
+                            <img src="https://via.placeholder.com/400x250/667eea/ffffff?text=Health+Kiosk" alt="Health Kiosk">
+                            <div class="portfolio-overlay">
+                                <a href="https://health-kiosk-1-pim6.onrender.com/patient/welcome" target="_blank" class="btn btn-primary">View Project</a>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3>Health Kiosk - Patient Portal</h3>
+                            <p>Comprehensive healthcare platform for patient management, appointments, and medical records with secure authentication system.</p>
+                            <div class="portfolio-tech">
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">Node.js</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">JWT Auth</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://health-kiosk-1-pim6.onrender.com/patient/welcome" target="_blank" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Patient Portal
+                                </a>
+                                <a href="https://health-kiosk-1-pim6.onrender.com/doctor/welcome" target="_blank" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-user-md"></i>
+                                    Doctor Portal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card">
+                        <div class="portfolio-image">
+                            <img src="https://via.placeholder.com/400x250/764ba2/ffffff?text=Home+Remedies" alt="Home Remedies">
+                            <div class="portfolio-overlay">
+                                <a href="https://home-remedies.onrender.com/" target="_blank" class="btn btn-primary">View Project</a>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3>Home Remedies Guide</h3>
+                            <p>Natural healthcare platform providing traditional home remedies and wellness tips with user-friendly interface and search functionality.</p>
+                            <div class="portfolio-tech">
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">Bootstrap</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://home-remedies.onrender.com/" target="_blank" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Visit Website
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card">
+                        <div class="portfolio-image">
+                            <img src="https://via.placeholder.com/400x250/4facfe/ffffff?text=AgriSmart" alt="AgriSmart Adviser">
+                            <div class="portfolio-overlay">
+                                <a href="https://agrismart-adviser.onrender.com/" target="_blank" class="btn btn-primary">View Project</a>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3>AgriSmart Adviser</h3>
+                            <p>AI-powered agricultural advisory platform helping farmers with crop recommendations, weather insights, and farming best practices.</p>
+                            <div class="portfolio-tech">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Flask</span>
+                                <span class="tech-tag">Machine Learning</span>
+                                <span class="tech-tag">APIs</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://agrismart-adviser.onrender.com/" target="_blank" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Visit Platform
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card">
+                        <div class="portfolio-image">
+                            <img src="https://via.placeholder.com/400x250/f093fb/ffffff?text=CataCuti+App" alt="CataCuti App">
+                            <div class="portfolio-overlay">
+                                <a href="https://catacutiapp.netlify.app" target="_blank" class="btn btn-primary">View Project</a>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3>CataCuti Mobile App</h3>
+                            <p>Modern mobile application for catalog management with intuitive UI, offline capabilities, and seamless user experience.</p>
+                            <div class="portfolio-tech">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">Firebase</span>
+                                <span class="tech-tag">Redux</span>
+                                <span class="tech-tag">PWA</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://catacutiapp.netlify.app" target="_blank" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Launch App
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Form Section -->
+        <section class="page-section" id="project-form">
+            <div class="container">
+                <div class="form-section">
+                    <div class="form-header">
+                        <h2>Start Your Project</h2>
+                        <p>Tell us about your website requirements and get a free quote</p>
+                    </div>
+
+                    <div class="project-form">
+                        <form id="projectForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="websiteType">Website Type *</label>
+                                    <select id="websiteType" class="form-control" required>
+                                        <option value="">Select Website Type</option>
+                                        <option value="normal">Normal Website</option>
+                                        <option value="ecommerce">E-Commerce Store</option>
+                                        <option value="blog">Blog/Portfolio</option>
+                                        <option value="business">Business Website</option>
+                                        <option value="custom">Custom Application</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="complexity">Complexity Level *</label>
+                                    <select id="complexity" class="form-control" required>
+                                        <option value="">Select Complexity</option>
+                                        <option value="simple">Simple (5-10 pages) - ₹11,000</option>
+                                        <option value="medium">Medium (11-20 pages) - ₹25,000</option>
+                                        <option value="complex">Complex (20+ pages) - ₹60,000</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="websiteName">Website Name *</label>
+                                <input type="text" id="websiteName" class="form-control" required placeholder="Enter your website name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Website Requirements Description *</label>
+                                <textarea id="description" class="form-control" required placeholder="Describe your website requirements in detail. Include:
+• Purpose of the website
+• Target audience
+• Features needed (contact form, gallery, blog, etc.)
+• Design preferences
+• Color scheme preferences
+• Any specific functionality
+• Reference websites (if any)" rows="8"></textarea>
+                                <small class="form-hint">Please be as detailed as possible. Additional edits after 2 revisions will cost ₹5,000 each.</small>
+                            </div>
+
+                            <!-- File Upload Section -->
+                            <div class="form-group">
+                                <label>Attach Reference Files (Optional)</label>
+                                <div class="file-upload-container">
+                                    <div class="drop-zone" id="dropZone">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <h4>Drop files here or click to upload</h4>
+                                        <p>Supported files: Images, PDF, DOC, ZIP (Max 10MB each)</p>
+                                        <small>You can upload design references, content documents, or any other relevant files</small>
+                                    </div>
+                                    <div class="file-preview" id="filePreview"></div>
+                                </div>
+                            </div>
+
+                            <div class="delivery-options">
+                                <h3 class="delivery-title">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Delivery Options
+                                </h3>
+                                <div class="delivery-cards">
+                                    <div class="delivery-card">
+                                        <div class="delivery-icon express">
+                                            <i class="fas fa-bolt"></i>
+                                        </div>
+                                        <h4>Express Delivery</h4>
+                                        <div class="delivery-price">+ ₹5,500</div>
+                                        <p>1 Day Delivery</p>
+                                        <label class="radio-option">
+                                            <input type="radio" name="deliveryOption" value="1day" required>
+                                            <div class="radio-content">
+                                                <div class="radio-title">1 Day Delivery</div>
+                                                <div class="radio-description">Get your project delivered in 24 hours</div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="delivery-card">
+                                        <div class="delivery-icon fast">
+                                            <i class="fas fa-truck"></i>
+                                        </div>
+                                        <h4>Fast Delivery</h4>
+                                        <div class="delivery-price">+ ₹5,000</div>
+                                        <p>2 Days Delivery</p>
+                                        <label class="radio-option">
+                                            <input type="radio" name="deliveryOption" value="2days" required>
+                                            <div class="radio-content">
+                                                <div class="radio-title">2 Days Delivery</div>
+                                                <div class="radio-description">Perfect balance of speed and quality</div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="delivery-card">
+                                        <div class="delivery-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <h4>Standard Delivery</h4>
+                                        <div class="delivery-price">Free</div>
+                                        <p>5 Days Delivery</p>
+                                        <label class="radio-option">
+                                            <input type="radio" name="deliveryOption" value="normal" required checked>
+                                            <div class="radio-content">
+                                                <div class="radio-title">Standard Delivery</div>
+                                                <div class="radio-description">Regular timeline with thorough testing</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-info">
+                                <div class="info-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <div class="info-content">
+                                        <h4>Payment Information</h4>
+                                        <p><strong>50% Advance Payment:</strong> Required to start the project</p>
+                                        <p><strong>50% Final Payment:</strong> Before project delivery</p>
+                                        <p><strong>Contact:</strong> 9448749572 for payment details</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-info">
+                                <i class="fas fa-info-circle"></i>
+                                <div class="info-text">
+                                    <strong>Note:</strong> You need to be logged in to submit a project. The cost will be calculated based on your requirements. Additional edits after 2 free revisions cost ₹5,000 each.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Project Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Projects Section -->
+        <section class="page-section" id="my-projects">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">My Projects</h2>
+                    <p class="section-subtitle">Manage and track your submitted projects</p>
+                </div>
+
+                <div id="projectsContainer">
+                    <div class="no-projects">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No Projects Yet</h3>
+                        <p>You haven't submitted any projects. Start by creating your first project!</p>
+                        <a href="#" class="btn btn-primary" onclick="showSection('project-form')">
+                            <i class="fas fa-plus"></i>
+                            Start Your First Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="page-section" id="contact">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Contact Us</h2>
+                    <p class="section-subtitle">Get in touch with our team</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <h3>Call Us</h3>
+                            <p>+91 9448749572</p>
+                            <small>Available 24/7</small>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Email Us</h3>
+                            <p>pratikpreetam1714@gmail.com</p>
+                            <small>We'll respond quickly</small>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>Business Hours</h3>
+                            <p>Monday - Sunday</p>
+                            <small>24/7 Available</small>
+                        </div>
+                    </div>
+
+                    <div class="contact-message">
+                        <h3>Why Choose Innovators United?</h3>
+                        <p>We are committed to delivering exceptional web development services with:</p>
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Professional and experienced developers</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Modern technology stack</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Responsive and mobile-friendly designs</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>SEO optimized websites</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Ongoing support and maintenance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let uploadedFiles = [];
+
+        // Check if user is logged in and adjust menu
+        function checkAuthStatus() {
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            
+            const isLoggedIn = {{ 'true' if username else 'false' }};
+            const username = '{{ username if username else "" }}';
+            
+            if (isLoggedIn && username) {
+                authButtons.style.display = 'none';
+                userInfo.style.display = 'flex';
+                userNameDisplay.textContent = username;
+            } else {
+                authButtons.style.display = 'flex';
+                userInfo.style.display = 'none';
+            }
+        }
+
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.currentTarget.classList.add('active');
+            
+            // Close mobile menu if open
+            document.getElementById('navToggle').classList.remove('active');
+            document.getElementById('navMenu').classList.remove('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Mobile menu toggle
+        document.getElementById('navToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+
+        // File upload functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.multiple = true;
+        fileInput.style.display = 'none';
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('highlight');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('highlight');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('highlight');
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File too large: ' + file.name + '. Maximum size is 10MB.');
+                    continue;
+                }
+                
+                uploadedFiles.push(file);
+                addFilePreview(file);
+            }
+        }
+
+        function addFilePreview(file) {
+            const preview = document.getElementById('filePreview');
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <i class="fas fa-file"></i>
+                    <div class="file-details">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                    </div>
+                </div>
+                <button type="button" class="file-remove" onclick="removeFile('${file.name}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            preview.appendChild(fileItem);
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            document.getElementById('filePreview').innerHTML = '';
+            uploadedFiles.forEach(file => addFilePreview(file));
+        }
+
+        // Project form submission - UPDATED TO REDIRECT TO SUCCESS PAGE
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const isLoggedIn = {{ 'true' if username else 'false' }};
+            
+            if (!isLoggedIn) {
+                alert('Please login to submit a project');
+                window.location.href = '/login';
+                return;
+            }
+            
+            const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked').value;
+            
+            const formData = {
+                websiteType: document.getElementById('websiteType').value,
+                complexity: document.getElementById('complexity').value,
+                websiteName: document.getElementById('websiteName').value,
+                description: document.getElementById('description').value,
+                deliveryOption: deliveryOption,
+                attachments: uploadedFiles.map(file => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                }))
+            };
+
+            fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to success page with project ID
+                    window.location.href = '/success/' + data.projectId;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error submitting project. Please try again.');
+            });
+        });
+
+        // Load user projects
+        function loadUserProjects() {
+            const isLoggedIn = {{ 'true' if username else 'false' }};
+            
+            if (!isLoggedIn) {
+                return;
+            }
+
+            fetch('/api/projects/user')
+                .then(response => response.json())
+                .then(projects => {
+                    const container = document.getElementById('projectsContainer');
+                    
+                    if (projects.length === 0) {
+                        container.innerHTML = `
+                            <div class="no-projects">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>No Projects Yet</h3>
+                                <p>You haven't submitted any projects. Start by creating your first project!</p>
+                                <a href="#" class="btn btn-primary" onclick="showSection('project-form')">
+                                    <i class="fas fa-plus"></i>
+                                    Start Your First Project
+                                </a>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <div class="projects-grid">
+                            ${projects.map(project => `
+                                <div class="project-card">
+                                    <div class="project-header">
+                                        <h3>${project.websiteName}</h3>
+                                        <span class="status-badge status-${project.status}">${project.status}</span>
+                                    </div>
+                                    <div class="project-details">
+                                        <div class="detail-item">
+                                            <label>Project ID:</label>
+                                            <span>${project.id}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Type:</label>
+                                            <span>${project.websiteType}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Complexity:</label>
+                                            <span>${project.complexity}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Total Cost:</label>
+                                            <span class="price">₹${project.totalCost}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Delivery Date:</label>
+                                            <span>${project.deliveryDate}</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-description">
+                                        <label>Description:</label>
+                                        <div class="description-content">
+                                            ${project.description}
+                                        </div>
+                                    </div>
+                                    ${project.attachments && project.attachments.length > 0 ? `
+                                    <div class="project-attachments">
+                                        <label>Attachments:</label>
+                                        <div class="attachments-list">
+                                            ${project.attachments.map(att => `
+                                                <div class="attachment-item">
+                                                    <i class="fas fa-file"></i>
+                                                    <span>${att.name}</span>
+                                                    <small>${att.size}</small>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    <div class="project-actions">
+                                        <a href="/success/${project.id}" class="btn btn-primary">
+                                            <i class="fas fa-eye"></i>
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error loading projects:', error);
+                });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadUserProjects();
+        });
+    </script>
+
+    <style>
+        /* Add these styles to your CSS for the portfolio section */
+        .project-links {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .portfolio-card .btn {
+            margin-top: 1rem;
+        }
+    </style>
+</body>
+</html>
