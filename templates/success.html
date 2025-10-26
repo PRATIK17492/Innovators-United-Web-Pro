@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Submitted Successfully - Innovators United</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-rocket"></i>
+                <span>Innovators United</span>
+            </div>
+            <div class="nav-user">
+                <div class="user-welcome">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Welcome, <strong>{{ session.username if session.username else 'User' }}</strong></span>
+                </div>
+                <a href="/" class="nav-btn nav-btn-outline">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/logout" class="nav-btn nav-btn-outline">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="success-container">
+                <div class="success-header">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h1>Project Submitted Successfully!</h1>
+                    <p>Your project has been received and is being processed</p>
+                </div>
+
+                <div class="project-summary">
+                    <div class="summary-card">
+                        <h3>Project Details</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <label>Project ID:</label>
+                                <span class="highlight">{{ project.id }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Website Name:</label>
+                                <span>{{ project.websiteName }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Website Type:</label>
+                                <span>{{ project.websiteType }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Complexity:</label>
+                                <span>{{ project.complexity }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Total Cost:</label>
+                                <span class="price highlight">₹{{ project.totalCost }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Advance Payment (50%):</label>
+                                <span class="price highlight">₹{{ project.advanceAmount }}</span>
+                            </div>
+                            <div class="summary-item">
+                                <label>Delivery Date:</label>
+                                <span>{{ project.deliveryDate }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-instructions-card">
+                        <h3>Payment Instructions</h3>
+                        <div class="instructions">
+                            <div class="instruction-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Pay Advance Amount</h4>
+                                    <p>Pay <strong class="highlight">₹{{ project.advanceAmount }}</strong> as advance to start your project development</p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Contact for Payment</h4>
+                                    <p><strong>Phone/WhatsApp:</strong> 9448749572</p>
+                                    <p><strong>Email:</strong> pratikpreetam1714@gmail.com</p>
+                                    <p><strong>UPI ID:</strong> 9448749572@ybl</p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Share Payment Proof</h4>
+                                    <p>Send payment screenshot to the above number/email with your Project ID: <strong>{{ project.id }}</strong></p>
+                                </div>
+                            </div>
+                            <div class="instruction-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Development Starts</h4>
+                                    <p>Once payment is confirmed, our team will start working on your project immediately</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home"></i>
+                        Go to Home
+                    </a>
+                    <button class="btn btn-success" onclick="downloadProjectDetails()">
+                        <i class="fas fa-download"></i>
+                        Download Details
+                    </button>
+                    <button class="btn btn-outline" onclick="window.print()">
+                        <i class="fas fa-print"></i>
+                        Print This Page
+                    </button>
+                </div>
+
+                <div class="next-steps">
+                    <h3>What Happens Next?</h3>
+                    <div class="steps-timeline">
+                        <div class="timeline-step">
+                            <div class="timeline-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Advance Payment</h4>
+                                <p>Pay 50% advance to initiate development</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Development Starts</h4>
+                                <p>Our team starts working on your project</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Review & Feedback</h4>
+                                <p>You review the progress and provide feedback</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h4>Project Delivery</h4>
+                                <p>Final delivery after full payment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function downloadProjectDetails() {
+            const projectId = '{{ project.id }}';
+            const websiteName = '{{ project.websiteName }}';
+            const totalCost = '{{ project.totalCost }}';
+            const advanceAmount = '{{ project.advanceAmount }}';
+            const deliveryDate = '{{ project.deliveryDate }}';
+            
+            const content = `
+Project Submission Details - Innovators United
+=============================================
+
+PROJECT DETAILS:
+───────────────
+Project ID: ${projectId}
+Website Name: ${websiteName}
+Total Cost: ₹${totalCost}
+Advance Payment (50%): ₹${advanceAmount}
+Delivery Date: ${deliveryDate}
+
+PAYMENT INSTRUCTIONS:
+───────────────────
+1. Pay advance amount of ₹${advanceAmount}
+2. Contact: 9448749572 (Call/WhatsApp)
+3. Email: pratikpreetam1714@gmail.com
+4. UPI ID: 9448749572@ybl
+5. Share payment screenshot with Project ID
+
+After payment confirmation, development will start immediately.
+
+Thank you for choosing Innovators United!
+            `;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `project-${projectId}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+
+    <style>
+        .success-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card, .payment-instructions-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        .summary-card h3, .payment-instructions-card h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 0.5rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item label {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .summary-item span {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+        }
+
+        .instructions {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .instruction-step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: var(--white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .step-content p {
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .next-steps {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .next-steps h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        .steps-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .timeline-step {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .timeline-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .timeline-content h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .timeline-content p {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .project-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .steps-timeline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

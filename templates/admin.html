@@ -1,0 +1,1194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Innovators United</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="navbar admin-navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-crown"></i>
+                <span>Admin Dashboard</span>
+            </div>
+            
+            <div class="nav-user">
+                <div class="user-welcome">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Welcome, <strong>{{ session.get('admin_name', 'Admin') }}</strong></span>
+                </div>
+                <div class="notification-bell" id="notificationBell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount">0</span>
+                </div>
+                <a href="/" class="nav-btn nav-btn-outline">
+                    <i class="fas fa-globe"></i>
+                    <span>View Site</span>
+                </a>
+                <a href="/admin/logout" class="nav-btn nav-btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <!-- Admin Dashboard -->
+        <section class="admin-dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>Project Management Dashboard</h1>
+                    <p>Manage all client projects and track progress</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalProjects">0</h3>
+                            <p>Total Projects</p>
+                        </div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingProjects">0</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="inProgressProjects">0</h3>
+                            <p>In Progress</p>
+                        </div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedProjects">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">₹0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card admin-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalClients">0</h3>
+                            <p>Total Clients</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="admin-controls">
+                    <div class="search-container admin-search">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="adminSearch" placeholder="Search projects by client name, project ID, website name...">
+                            <button class="btn btn-outline" onclick="clearAdminSearch()">
+                                <i class="fas fa-times"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <select id="statusFilter" class="form-control" onchange="filterProjects()">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                        <select id="paymentFilter" class="form-control" onchange="filterProjects()">
+                            <option value="">All Payments</option>
+                            <option value="pending">Payment Pending</option>
+                            <option value="advance_paid">Advance Paid</option>
+                            <option value="completed">Payment Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Projects Table -->
+                <div class="admin-table-section">
+                    <div class="table-header">
+                        <h2>All Projects</h2>
+                        <div class="table-actions">
+                            <button class="btn btn-outline" onclick="exportProjects()">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                            <button class="btn btn-primary" onclick="refreshProjects()">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Client Name</th>
+                                    <th>Username</th>
+                                    <th>Phone</th>
+                                    <th>Website Name</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Delivery</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTable">
+                                <tr>
+                                    <td colspan="11" class="loading-row">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading projects...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-footer">
+                        <div class="table-stats">
+                            <span id="tableCount">Showing 0 projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Project Details Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2>Project Details</h2>
+                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="projectDetailsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Project</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editStatus">Status:</label>
+                            <select id="editStatus" class="form-control">
+                                <option value="pending">Pending</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPayment">Payment Status:</label>
+                            <select id="editPayment" class="form-control">
+                                <option value="pending">Pending</option>
+                                <option value="advance_paid">Advance Paid</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUrl">Website URL:</label>
+                        <input type="url" id="editUrl" class="form-control" placeholder="https://example.com">
+                    </div>
+
+                    <!-- Payment Actions -->
+                    <div class="payment-actions">
+                        <h4>Payment Management</h4>
+                        <div class="payment-buttons">
+                            <button type="button" class="btn btn-warning" id="advancePaymentBtn" onclick="markAdvancePaid(currentProjectId)">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Mark Advance Paid
+                            </button>
+                            <button type="button" class="btn btn-success" id="fullPaymentBtn" onclick="markFullPaid(currentProjectId)">
+                                <i class="fas fa-check-circle"></i>
+                                Mark Full Payment
+                            </button>
+                        </div>
+                        <div class="payment-status" id="paymentStatusInfo">
+                            <!-- Payment status will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-success" onclick="generateBill()">
+                            <i class="fas fa-file-invoice"></i>
+                            Generate Bill
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Update Project
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="closeEditModal()">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Sound -->
+    <audio id="notificationSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification-toast">
+        <div class="toast-content">
+            <i class="fas fa-bell"></i>
+            <div class="toast-message">
+                <strong>New Project Submitted!</strong>
+                <span id="toastProjectName">Project Name</span>
+            </div>
+            <button class="toast-close" onclick="hideNotificationToast()">&times;</button>
+        </div>
+    </div>
+
+    <script>
+        let currentProjectId = null;
+        let allProjects = [];
+        let lastProjectCount = 0;
+        let newProjects = [];
+
+        // Load projects on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjects();
+            initializeAdminSearch();
+            requestNotificationPermission();
+            startProjectPolling();
+        });
+
+        function initializeAdminSearch() {
+            const searchInput = document.getElementById('adminSearch');
+            searchInput.addEventListener('input', filterProjects);
+        }
+
+        function loadProjects() {
+            fetch('/api/projects')
+                .then(response => response.json())
+                .then(projects => {
+                    // Check for new projects
+                    if (projects.length > lastProjectCount && lastProjectCount > 0) {
+                        const newProjectIds = projects.slice(lastProjectCount).map(p => p.id);
+                        showNewProjectsNotification(projects.slice(lastProjectCount));
+                    }
+                    
+                    allProjects = projects;
+                    lastProjectCount = projects.length;
+                    displayProjects(projects);
+                    updateStats(projects);
+                    updateNotificationCount();
+                })
+                .catch(error => {
+                    console.error('Error loading projects:', error);
+                    document.getElementById('projectsTable').innerHTML = `
+                        <tr>
+                            <td colspan="11" class="error-row">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Error loading projects. Please try again.
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function showNewProjectsNotification(newProjects) {
+            if (newProjects.length > 0) {
+                // Play notification sound
+                playNotificationSound();
+                
+                // Show browser notification
+                showBrowserNotification(`New Project: ${newProjects[0].websiteName}`);
+                
+                // Show toast notification
+                showNotificationToast(newProjects[0]);
+                
+                // Add to new projects list
+                newProjects.forEach(project => {
+                    if (!newProjects.find(p => p.id === project.id)) {
+                        newProjects.push(project);
+                    }
+                });
+            }
+        }
+
+        function showNotificationToast(project) {
+            const toast = document.getElementById('notificationToast');
+            const projectName = document.getElementById('toastProjectName');
+            
+            projectName.textContent = project.websiteName;
+            toast.classList.add('show');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideNotificationToast();
+            }, 5000);
+        }
+
+        function hideNotificationToast() {
+            const toast = document.getElementById('notificationToast');
+            toast.classList.remove('show');
+        }
+
+        function playNotificationSound() {
+            const sound = document.getElementById('notificationSound');
+            sound.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        function showBrowserNotification(message) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Innovators United - Admin', {
+                    body: message,
+                    icon: '/static/favicon.ico',
+                    tag: 'new-project'
+                });
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function startProjectPolling() {
+            // Check for new projects every 30 seconds
+            setInterval(loadProjects, 30000);
+        }
+
+        function updateNotificationCount() {
+            const count = newProjects.length;
+            const countElement = document.getElementById('notificationCount');
+            const bell = document.getElementById('notificationBell');
+            
+            countElement.textContent = count;
+            
+            if (count > 0) {
+                bell.classList.add('has-notifications');
+            } else {
+                bell.classList.remove('has-notifications');
+            }
+        }
+
+        function displayProjects(projects) {
+            const table = document.getElementById('projectsTable');
+            
+            if (projects.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="empty-row">
+                            <i class="fas fa-folder-open"></i>
+                            No projects found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            table.innerHTML = projects.map(project => `
+                <tr>
+                    <td><strong>${project.id}</strong></td>
+                    <td>${project.userName}</td>
+                    <td>${project.username}</td>
+                    <td>${project.userPhone}</td>
+                    <td>${project.websiteName}</td>
+                    <td><span class="type-badge">${project.websiteType}</span></td>
+                    <td class="amount">₹${project.totalCost.toLocaleString('en-IN')}</td>
+                    <td>${project.deliveryDate}</td>
+                    <td><span class="status-badge status-${project.status}">${project.status}</span></td>
+                    <td>
+                        <span class="payment-badge payment-${project.paymentStatus}">${project.paymentStatus}</span>
+                        ${project.advancePaid ? '<i class="fas fa-check-circle text-success" title="Advance Paid"></i>' : ''}
+                        ${project.fullPaid ? '<i class="fas fa-check-double text-success" title="Full Payment Done"></i>' : ''}
+                    </td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-primary" onclick="viewProjectDetails('${project.id}')" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning" onclick="editProject('${project.id}')" title="Manage Project">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${project.billGenerated ? `
+                        <button class="btn btn-sm btn-success" onclick="viewBill('${project.id}')" title="View Bill">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('tableCount').textContent = `Showing ${projects.length} projects`;
+        }
+
+        function filterProjects() {
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const paymentFilter = document.getElementById('paymentFilter').value;
+            
+            const filteredProjects = allProjects.filter(project => {
+                const matchesSearch = 
+                    project.userName.toLowerCase().includes(searchTerm) ||
+                    project.id.toLowerCase().includes(searchTerm) ||
+                    project.websiteName.toLowerCase().includes(searchTerm) ||
+                    project.username.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || project.status === statusFilter;
+                const matchesPayment = !paymentFilter || project.paymentStatus === paymentFilter;
+                
+                return matchesSearch && matchesStatus && matchesPayment;
+            });
+            
+            displayProjects(filteredProjects);
+        }
+
+        function clearAdminSearch() {
+            document.getElementById('adminSearch').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('paymentFilter').value = '';
+            filterProjects();
+        }
+
+        function updateStats(projects) {
+            const total = projects.length;
+            const pending = projects.filter(p => p.status === 'pending').length;
+            const inProgress = projects.filter(p => p.status === 'in-progress').length;
+            const completed = projects.filter(p => p.status === 'completed' || p.status === 'delivered').length;
+            const revenue = projects.reduce((sum, project) => sum + project.totalCost, 0);
+            const clients = [...new Set(projects.map(p => p.userId))].length;
+            
+            document.getElementById('totalProjects').textContent = total;
+            document.getElementById('pendingProjects').textContent = pending;
+            document.getElementById('inProgressProjects').textContent = inProgress;
+            document.getElementById('completedProjects').textContent = completed;
+            document.getElementById('totalRevenue').textContent = `₹${revenue.toLocaleString('en-IN')}`;
+            document.getElementById('totalClients').textContent = clients;
+        }
+
+        function refreshProjects() {
+            loadProjects();
+            showNotification('Projects refreshed successfully!');
+        }
+
+        function exportProjects() {
+            // Simple export functionality - in real app, this would generate CSV/Excel
+            const dataStr = JSON.stringify(allProjects, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `projects-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Projects exported successfully!');
+        }
+
+        function viewProjectDetails(projectId) {
+            fetch('/api/projects/' + projectId)
+                .then(response => response.json())
+                .then(project => {
+                    const content = document.getElementById('projectDetailsContent');
+                    content.innerHTML = `
+                        <div class="project-detail-view">
+                            <div class="detail-header">
+                                <h3 style="color: var(--primary); margin-bottom: 1rem;">Project Information</h3>
+                            </div>
+                            
+                            <div class="detail-grid">
+                                <div class="detail-section">
+                                    <h4>Client Information</h4>
+                                    <div class="detail-item">
+                                        <label>Name:</label>
+                                        <span>${project.userName}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Username:</label>
+                                        <span>${project.username}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Email:</label>
+                                        <span>${project.userEmail}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Phone:</label>
+                                        <span>${project.userPhone}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Project ID:</label>
+                                        <span class="project-id">${project.id}</span>
+                                    </div>
+                                </div>
+                                <div class="detail-section">
+                                    <h4>Project Details</h4>
+                                    <div class="detail-item">
+                                        <label>Website Name:</label>
+                                        <span>${project.websiteName}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Type:</label>
+                                        <span>${project.websiteType}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Complexity:</label>
+                                        <span>${project.complexity}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Total Cost:</label>
+                                        <span class="price">₹${project.totalCost}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Advance Amount:</label>
+                                        <span class="price">₹${project.advanceAmount || project.totalCost * 0.5}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Delivery Date:</label>
+                                        <span>${project.deliveryDate}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Status:</label>
+                                        <span class="status-badge status-${project.status}">${project.status}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Status -->
+                            <div class="payment-info-section">
+                                <h4>Payment Information</h4>
+                                <div class="payment-status-grid">
+                                    <div class="payment-status-item ${project.advancePaid ? 'paid' : 'pending'}">
+                                        <i class="fas ${project.advancePaid ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                        <div>
+                                            <strong>Advance Payment</strong>
+                                            <span>₹${project.advanceAmount || project.totalCost * 0.5}</span>
+                                            <small>${project.advancePaid ? 'Paid' : 'Pending'}</small>
+                                        </div>
+                                    </div>
+                                    <div class="payment-status-item ${project.fullPaid ? 'paid' : 'pending'}">
+                                        <i class="fas ${project.fullPaid ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                        <div>
+                                            <strong>Full Payment</strong>
+                                            <span>₹${project.totalCost - (project.advanceAmount || project.totalCost * 0.5)}</span>
+                                            <small>${project.fullPaid ? 'Paid' : 'Pending'}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="description-section">
+                                <h4>Website Requirements Description:</h4>
+                                <div class="description-content">
+                                    <p>${project.description}</p>
+                                </div>
+                            </div>
+
+                            ${project.attachments && project.attachments.length > 0 ? `
+                            <div class="attachments-section">
+                                <h4>Attachments (${project.attachments.length})</h4>
+                                <div class="attachments-list">
+                                    ${project.attachments.map(att => `
+                                        <div class="attachment-item">
+                                            <i class="fas ${getFileIcon(att.type)}"></i>
+                                            <div class="attachment-info">
+                                                <div class="attachment-name">${att.name}</div>
+                                                <div class="attachment-size">${att.size}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            <div class="cost-section">
+                                <h4>Cost Breakdown</h4>
+                                <div class="cost-breakdown">
+                                    <div class="cost-item">
+                                        <span>Base Cost:</span>
+                                        <span>₹${project.totalCost - project.editCharges - project.deliveryCharges}</span>
+                                    </div>
+                                    ${project.deliveryCharges > 0 ? `
+                                    <div class="cost-item">
+                                        <span>Express Delivery:</span>
+                                        <span>₹${project.deliveryCharges}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${project.editCharges > 0 ? `
+                                    <div class="cost-item">
+                                        <span>Additional Edits:</span>
+                                        <span>₹${project.editCharges}</span>
+                                    </div>
+                                    ` : ''}
+                                    <div class="cost-total">
+                                        <span>Total Amount:</span>
+                                        <span>₹${project.totalCost}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('projectModal').style.display = 'flex';
+                });
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').style.display = 'none';
+        }
+
+        function editProject(projectId) {
+            currentProjectId = projectId;
+            
+            fetch('/api/projects/' + projectId)
+                .then(response => response.json())
+                .then(project => {
+                    document.getElementById('editStatus').value = project.status;
+                    document.getElementById('editPayment').value = project.paymentStatus;
+                    document.getElementById('editUrl').value = project.websiteUrl || '';
+                    
+                    // Update payment buttons and status
+                    updatePaymentUI(project);
+                    
+                    document.getElementById('editModal').style.display = 'flex';
+                });
+        }
+
+        function updatePaymentUI(project) {
+            const advanceBtn = document.getElementById('advancePaymentBtn');
+            const fullBtn = document.getElementById('fullPaymentBtn');
+            const statusInfo = document.getElementById('paymentStatusInfo');
+            
+            // Update button states
+            if (project.advancePaid) {
+                advanceBtn.innerHTML = '<i class="fas fa-check-circle"></i> Advance Paid';
+                advanceBtn.disabled = true;
+                advanceBtn.classList.remove('btn-warning');
+                advanceBtn.classList.add('btn-success');
+            } else {
+                advanceBtn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Mark Advance Paid';
+                advanceBtn.disabled = false;
+                advanceBtn.classList.remove('btn-success');
+                advanceBtn.classList.add('btn-warning');
+            }
+            
+            if (project.fullPaid) {
+                fullBtn.innerHTML = '<i class="fas fa-check-double"></i> Full Payment Done';
+                fullBtn.disabled = true;
+                fullBtn.classList.remove('btn-success');
+                fullBtn.classList.add('btn-primary');
+            } else {
+                fullBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Full Payment';
+                fullBtn.disabled = false;
+                fullBtn.classList.remove('btn-primary');
+                fullBtn.classList.add('btn-success');
+            }
+            
+            // Update status info
+            statusInfo.innerHTML = `
+                <p><strong>Advance:</strong> <span class="${project.advancePaid ? 'text-success' : 'text-warning'}">${project.advancePaid ? 'Paid' : 'Pending'}</span></p>
+                <p><strong>Full Payment:</strong> <span class="${project.fullPaid ? 'text-success' : 'text-warning'}">${project.fullPaid ? 'Paid' : 'Pending'}</span></p>
+                <p><strong>Total Amount:</strong> ₹${project.totalCost}</p>
+                <p><strong>Advance Amount:</strong> ₹${project.advanceAmount || project.totalCost * 0.5}</p>
+            `;
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function markAdvancePaid(projectId) {
+            if (confirm('Mark advance payment as paid?')) {
+                fetch('/api/projects/' + projectId + '/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'advance'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Advance payment marked as paid!');
+                        loadProjects();
+                        // Refresh the current project data
+                        if (currentProjectId === projectId) {
+                            editProject(projectId);
+                        }
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                });
+            }
+        }
+
+        function markFullPaid(projectId) {
+            if (confirm('Mark full payment as paid?')) {
+                fetch('/api/projects/' + projectId + '/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'full'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Full payment marked as paid!');
+                        loadProjects();
+                        // Refresh the current project data
+                        if (currentProjectId === projectId) {
+                            editProject(projectId);
+                        }
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                });
+            }
+        }
+
+        function generateBill() {
+            const websiteUrl = document.getElementById('editUrl').value;
+            
+            if (!websiteUrl) {
+                alert('Please enter website URL before generating bill');
+                return;
+            }
+            
+            fetch('/api/projects/' + currentProjectId + '/bill', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    websiteUrl: websiteUrl
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Bill generated successfully!');
+                    loadProjects();
+                    closeEditModal();
+                } else {
+                    alert('Error generating bill: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error generating bill. Please try again.');
+            });
+        }
+
+        function viewBill(projectId) {
+            fetch('/api/projects/' + projectId)
+                .then(response => response.json())
+                .then(project => {
+                    const billContent = document.getElementById('projectDetailsContent');
+                    billContent.innerHTML = `
+                        <div class="bill-container">
+                            <div class="bill-header">
+                                <h2>INNOVATORS UNITED WEB PRO</h2>
+                                <p>Website Development Bill</p>
+                            </div>
+                            
+                            <div class="bill-details">
+                                <div>
+                                    <h4>Client Information</h4>
+                                    <p><strong>Name:</strong> ${project.userName}</p>
+                                    <p><strong>Username:</strong> ${project.username}</p>
+                                    <p><strong>Email:</strong> ${project.userEmail}</p>
+                                    <p><strong>Phone:</strong> ${project.userPhone}</p>
+                                    <p><strong>Project ID:</strong> ${project.id}</p>
+                                </div>
+                                <div>
+                                    <h4>Project Details</h4>
+                                    <p><strong>Date:</strong> ${new Date(project.createdAt).toLocaleDateString()}</p>
+                                    <p><strong>Website:</strong> ${project.websiteName}</p>
+                                    <p><strong>Type:</strong> ${project.websiteType}</p>
+                                    <p><strong>Delivery:</strong> ${project.deliveryDate}</p>
+                                </div>
+                            </div>
+
+                            <div style="margin: 1rem 0;">
+                                <h4>Website Requirements:</h4>
+                                <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px;">
+                                    ${project.description}
+                                </div>
+                            </div>
+                            
+                            <div class="bill-items">
+                                <div class="bill-item">
+                                    <span>Base Cost (${project.complexity}):</span>
+                                    <span>₹${project.totalCost - project.editCharges - project.deliveryCharges}</span>
+                                </div>
+                                ${project.deliveryCharges > 0 ? `
+                                <div class="bill-item">
+                                    <span>Express Delivery Charges:</span>
+                                    <span>₹${project.deliveryCharges}</span>
+                                </div>
+                                ` : ''}
+                                ${project.editCharges > 0 ? `
+                                <div class="bill-item">
+                                    <span>Additional Edits (${project.editCount - 2} x ₹5,000):</span>
+                                    <span>₹${project.editCharges}</span>
+                                </div>
+                                ` : ''}
+                                <div class="bill-item bill-total">
+                                    <span>Total Amount:</span>
+                                    <span>₹${project.totalCost}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-instructions">
+                                <h4><i class="fas fa-phone"></i> Payment Instructions</h4>
+                                <p>Please contact <strong>9448749572</strong> to complete your payment.</p>
+                                <p>Project will be delivered by: <strong>${project.deliveryDate}</strong></p>
+                                ${project.websiteUrl ? `<p>Website URL: <a href="${project.websiteUrl}" target="_blank">${project.websiteUrl}</a></p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('projectModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    alert('Error loading bill details.');
+                });
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const status = document.getElementById('editStatus').value;
+            const paymentStatus = document.getElementById('editPayment').value;
+            const url = document.getElementById('editUrl').value;
+            
+            fetch('/api/projects/' + currentProjectId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: status,
+                    paymentStatus: paymentStatus,
+                    websiteUrl: url
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Project updated successfully!');
+                    closeEditModal();
+                    loadProjects();
+                } else {
+                    alert('Error updating project: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error updating project. Please try again.');
+            });
+        });
+
+        function getFileIcon(type) {
+            if (type.startsWith('image/')) return 'fa-file-image';
+            if (type === 'application/pdf') return 'fa-file-pdf';
+            if (type.includes('word') || type.includes('document')) return 'fa-file-word';
+            if (type === 'application/zip') return 'fa-file-archive';
+            return 'fa-file';
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" class="notification-close">&times;</button>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const projectModal = document.getElementById('projectModal');
+            const editModal = document.getElementById('editModal');
+            
+            if (event.target === projectModal) {
+                closeProjectModal();
+            }
+            if (event.target === editModal) {
+                closeEditModal();
+            }
+        }
+
+        // Notification bell click handler
+        document.getElementById('notificationBell').addEventListener('click', function() {
+            // Clear notifications
+            newProjects = [];
+            updateNotificationCount();
+            hideNotificationToast();
+        });
+    </script>
+
+    <style>
+        /* Notification Styles */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification-bell.has-notifications {
+            color: #FFD700;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .notification-toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            z-index: 1003;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toast-content i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-message strong {
+            display: block;
+            color: var(--dark);
+        }
+
+        .toast-message span {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Payment Info Section */
+        .payment-info-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .payment-status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-status-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .payment-status-item.paid {
+            border-left: 4px solid var(--success);
+        }
+
+        .payment-status-item.pending {
+            border-left: 4px solid var(--warning);
+        }
+
+        .payment-status-item i {
+            font-size: 1.5rem;
+        }
+
+        .payment-status-item.paid i {
+            color: var(--success);
+        }
+
+        .payment-status-item.pending i {
+            color: var(--warning);
+        }
+
+        .payment-status-item div {
+            flex: 1;
+        }
+
+        .payment-status-item strong {
+            display: block;
+            color: var(--dark);
+        }
+
+        .payment-status-item span {
+            display: block;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .payment-status-item small {
+            color: var(--secondary);
+        }
+
+        /* Payment Actions in Edit Modal */
+        .payment-actions {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .payment-status p {
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .text-success {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .text-warning {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        /* Table Enhancements */
+        .admin-table .actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .payment-status-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-buttons {
+                flex-direction: column;
+            }
+            
+            .admin-table .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>
