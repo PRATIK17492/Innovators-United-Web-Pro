@@ -85,29 +85,38 @@
             font-size: 1.1rem;
         }
 
-        /* Website type specific styling */
+        /* FIXED: Website type specific styling */
+        .website-type-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
         .website-type-option {
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 1.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: white;
         }
 
         .website-type-option:hover {
             border-color: #667eea;
             background-color: #f7fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .website-type-option.selected {
             border-color: #667eea;
             background-color: #edf2f7;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
         }
 
         .website-type-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
@@ -115,16 +124,19 @@
         .website-type-name {
             font-weight: 600;
             color: #2d3748;
+            font-size: 1.1rem;
         }
 
         .website-type-price {
             font-weight: 700;
             color: #667eea;
+            font-size: 1rem;
         }
 
         .website-type-description {
             color: #718096;
             font-size: 0.9rem;
+            line-height: 1.4;
         }
 
         .website-type-note {
@@ -132,6 +144,76 @@
             font-size: 0.8rem;
             font-style: italic;
             margin-top: 0.5rem;
+        }
+
+        /* FIXED: Form group full width */
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* FIXED: Button states */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn:not(:disabled):hover {
+            transform: translateY(-1px);
+        }
+
+        /* FIXED: Loading spinner */
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* FIXED: Make sure form controls are clickable */
+        .form-control {
+            cursor: pointer;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        /* FIXED: Radio option styling */
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            background-color: #f7fafc;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 1rem;
+        }
+
+        .radio-content {
+            flex: 1;
+        }
+
+        .radio-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .radio-description {
+            color: #718096;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -415,12 +497,12 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="userName">Your Name *</label>
-                                    <input type="text" id="userName" class="form-control" value="{{ username or '' }}" required>
+                                    <input type="text" id="userName" class="form-control" value="{{ user_name if user_name else '' }}" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email *</label>
-                                    <input type="email" id="email" class="form-control" required>
+                                    <input type="email" id="email" class="form-control" value="{{ user_email if user_email else '' }}" required>
                                 </div>
 
                                 <div class="form-group">
@@ -428,7 +510,7 @@
                                     <input type="tel" id="phone" class="form-control" required>
                                 </div>
 
-                                <!-- UPDATED: Website Type Selection with new options -->
+                                <!-- FIXED: Website Type Selection -->
                                 <div class="form-group full-width">
                                     <label for="websiteType">Website Type *</label>
                                     <div class="website-type-options">
@@ -485,9 +567,12 @@
                                         </div>
                                     </div>
                                     <input type="hidden" id="websiteType" required>
+                                    <div id="websiteTypeError" style="color: red; font-size: 0.9rem; margin-top: 0.5rem; display: none;">
+                                        Please select a website type
+                                    </div>
                                 </div>
 
-                                <!-- UPDATED: Complexity Level - Auto-set for WWW and E-commerce -->
+                                <!-- Complexity Level -->
                                 <div class="form-group">
                                     <label for="complexity">Complexity Level *</label>
                                     <select id="complexity" class="form-control" required>
@@ -600,7 +685,7 @@
                                 </div>
                             </div>
 
-                            <!-- UPDATED: Payment Information -->
+                            <!-- Payment Information -->
                             <div class="payment-info">
                                 <div class="info-card">
                                     <i class="fas fa-credit-card"></i>
@@ -675,7 +760,6 @@
                             </div>
                             <h3>Call Us</h3>
                             <p>+91 9448749572</p>
-                            <!-- UPDATED: Business Hours -->
                             <small>Monday to Saturday: 4PM to 9PM</small>
                         </div>
 
@@ -694,7 +778,6 @@
                             </div>
                             <h3>Business Hours</h3>
                             <p>Monday - Saturday</p>
-                            <!-- UPDATED: Business Hours -->
                             <small>4:00 PM - 9:00 PM</small>
                         </div>
                     </div>
@@ -734,7 +817,7 @@
         let uploadedFiles = [];
         let selectedWebsiteType = '';
 
-        // Website Type Selection Function
+        // FIXED: Website Type Selection Function
         function selectWebsiteType(type, element) {
             // Remove selected class from all options
             document.querySelectorAll('.website-type-option').forEach(opt => {
@@ -747,6 +830,9 @@
             // Set the hidden input value
             selectedWebsiteType = type;
             document.getElementById('websiteType').value = type;
+            
+            // Hide error message
+            document.getElementById('websiteTypeError').style.display = 'none';
             
             // Auto-set complexity for WWW and E-commerce
             const complexitySelect = document.getElementById('complexity');
@@ -780,6 +866,16 @@
                 submitBtn.style.opacity = "1";
                 submitBtn.style.cursor = "pointer";
                 loginNotice.style.display = 'none';
+                
+                // Auto-fill user data if available
+                const userNameInput = document.getElementById('userName');
+                const emailInput = document.getElementById('email');
+                if (userNameInput && !userNameInput.value) {
+                    userNameInput.value = '{{ user_name if user_name else "" }}';
+                }
+                if (emailInput && !emailInput.value) {
+                    emailInput.value = '{{ user_email if user_email else "" }}';
+                }
             } else {
                 authButtons.style.display = 'flex';
                 userInfo.style.display = 'none';
@@ -809,8 +905,12 @@
             event.currentTarget.classList.add('active');
             
             // Close mobile menu if open
-            document.getElementById('navToggle').classList.remove('active');
-            document.getElementById('navMenu').classList.remove('active');
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (navToggle && navMenu) {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
             
             // Scroll to top
             window.scrollTo(0, 0);
@@ -881,7 +981,7 @@
             uploadedFiles.forEach(file => addFilePreview(file));
         }
 
-        // Project form submission
+        // FIXED: Project form submission
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -895,11 +995,33 @@
 
             // Validate website type selection
             if (!selectedWebsiteType) {
+                document.getElementById('websiteTypeError').style.display = 'block';
                 alert('Please select a website type');
                 return;
             }
+
+            // Validate all required fields
+            const requiredFields = [
+                'userName', 'email', 'phone', 'category', 
+                'websiteName', 'description', 'complexity'
+            ];
             
-            const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked').value;
+            for (let field of requiredFields) {
+                const element = document.getElementById(field);
+                if (!element || !element.value.trim()) {
+                    const fieldName = field.replace(/([A-Z])/g, ' $1').toLowerCase();
+                    alert(`Please fill in the ${fieldName} field`);
+                    if (element) element.focus();
+                    return;
+                }
+            }
+
+            // Validate delivery option
+            const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
+            if (!deliveryOption) {
+                alert('Please select a delivery option');
+                return;
+            }
             
             const formData = {
                 userName: document.getElementById('userName').value,
@@ -910,13 +1032,14 @@
                 complexity: document.getElementById('complexity').value,
                 websiteName: document.getElementById('websiteName').value,
                 description: document.getElementById('description').value,
-                deliveryOption: deliveryOption,
-                attachments: uploadedFiles.map(file => ({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                }))
+                deliveryOption: deliveryOption.value
             };
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
             fetch('/api/projects', {
                 method: 'POST',
@@ -925,17 +1048,27 @@
                 },
                 body: JSON.stringify(formData)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Redirect to success page with project ID
                     window.location.href = '/success/' + data.projectId;
                 } else {
-                    alert('Error: ' + data.error);
+                    alert('Error: ' + (data.error || 'Unknown error occurred'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 }
             })
             .catch(error => {
-                alert('Error submitting project. Please try again.');
+                console.error('Error:', error);
+                alert('Error submitting project. Please check your connection and try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             });
         });
 
@@ -952,7 +1085,7 @@
                 .then(projects => {
                     const container = document.getElementById('projectsContainer');
                     
-                    if (projects.length === 0) {
+                    if (!projects || projects.length === 0) {
                         container.innerHTML = `
                             <div class="no-projects">
                                 <i class="fas fa-folder-open"></i>
@@ -973,7 +1106,7 @@
                                 <div class="project-card">
                                     <div class="project-header">
                                         <h3>${project.websiteName}</h3>
-                                        <span class="status-badge status-${project.status}">${project.status}</span>
+                                        <span class="status-badge status-${project.status || 'submitted'}">${project.status || 'submitted'}</span>
                                     </div>
                                     <div class="project-details">
                                         <div class="detail-item">
@@ -990,11 +1123,11 @@
                                         </div>
                                         <div class="detail-item">
                                             <label>Total Cost:</label>
-                                            <span class="price">₹${project.totalCost}</span>
+                                            <span class="price">₹${project.totalCost || '0'}</span>
                                         </div>
                                         <div class="detail-item">
                                             <label>Delivery Date:</label>
-                                            <span>${project.deliveryDate}</span>
+                                            <span>${project.deliveryDate || 'Not set'}</span>
                                         </div>
                                     </div>
                                     <div class="project-description">
@@ -1003,20 +1136,6 @@
                                             ${project.description}
                                         </div>
                                     </div>
-                                    ${project.attachments && project.attachments.length > 0 ? `
-                                    <div class="project-attachments">
-                                        <label>Attachments:</label>
-                                        <div class="attachments-list">
-                                            ${project.attachments.map(att => `
-                                                <div class="attachment-item">
-                                                    <i class="fas fa-file"></i>
-                                                    <span>${att.name}</span>
-                                                    <small>${att.size}</small>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                    ` : ''}
                                     <div class="project-actions">
                                         <a href="/success/${project.id}" class="btn btn-primary">
                                             <i class="fas fa-eye"></i>
