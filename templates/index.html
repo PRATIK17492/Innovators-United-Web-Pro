@@ -45,6 +45,94 @@
         .page-section {
             padding-top: 0;
         }
+
+        /* Add these styles for the portfolio section */
+        .project-links {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .portfolio-card .btn {
+            margin-top: 1rem;
+        }
+
+        /* Form styling additions */
+        #loginNotice {
+            display: none; 
+            color: red; 
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .form-actions {
+            margin-top: 2rem;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Website type specific styling */
+        .website-type-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .website-type-option:hover {
+            border-color: #667eea;
+            background-color: #f7fafc;
+        }
+
+        .website-type-option.selected {
+            border-color: #667eea;
+            background-color: #edf2f7;
+        }
+
+        .website-type-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .website-type-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .website-type-price {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .website-type-description {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .website-type-note {
+            color: #e53e3e;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -188,8 +276,8 @@
                             <div class="feature-icon">
                                 <i class="fas fa-headset"></i>
                             </div>
-                            <h3>24/7 Support</h3>
-                            <p>Round-the-clock support to help you with any issues or questions</p>
+                            <h3>Dedicated Support</h3>
+                            <p>Professional support to help you with any issues or questions</p>
                         </div>
                     </div>
                 </div>
@@ -323,19 +411,83 @@
 
                     <div class="project-form">
                         <form id="projectForm">
+                            <!-- Personal Information Fields -->
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="websiteType">Website Type *</label>
-                                    <select id="websiteType" class="form-control" required>
-                                        <option value="">Select Website Type</option>
-                                        <option value="normal">Normal Website</option>
-                                        <option value="ecommerce">E-Commerce Store</option>
-                                        <option value="blog">Blog/Portfolio</option>
-                                        <option value="business">Business Website</option>
-                                        <option value="custom">Custom Application</option>
-                                    </select>
+                                    <label for="userName">Your Name *</label>
+                                    <input type="text" id="userName" class="form-control" value="{{ username or '' }}" required>
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Phone *</label>
+                                    <input type="tel" id="phone" class="form-control" required>
+                                </div>
+
+                                <!-- UPDATED: Website Type Selection with new options -->
+                                <div class="form-group full-width">
+                                    <label for="websiteType">Website Type *</label>
+                                    <div class="website-type-options">
+                                        <div class="website-type-option" onclick="selectWebsiteType('www', this)">
+                                            <div class="website-type-header">
+                                                <div class="website-type-name">WWW Website</div>
+                                                <div class="website-type-price">Starts from ₹25,000</div>
+                                            </div>
+                                            <div class="website-type-description">
+                                                Standard website with custom domain, responsive design, and basic functionality
+                                            </div>
+                                            <div class="website-type-note">Starts from Medium Complexity</div>
+                                        </div>
+
+                                        <div class="website-type-option" onclick="selectWebsiteType('ecommerce', this)">
+                                            <div class="website-type-header">
+                                                <div class="website-type-name">E-Commerce Store</div>
+                                                <div class="website-type-price">Starts from ₹25,000</div>
+                                            </div>
+                                            <div class="website-type-description">
+                                                Online store with product catalog, shopping cart, payment gateway integration
+                                            </div>
+                                            <div class="website-type-note">Starts from Medium Complexity</div>
+                                        </div>
+
+                                        <div class="website-type-option" onclick="selectWebsiteType('blog', this)">
+                                            <div class="website-type-header">
+                                                <div class="website-type-name">Blog/Portfolio</div>
+                                                <div class="website-type-price">₹11,000 - ₹60,000</div>
+                                            </div>
+                                            <div class="website-type-description">
+                                                Personal or professional blog/portfolio with content management
+                                            </div>
+                                        </div>
+
+                                        <div class="website-type-option" onclick="selectWebsiteType('business', this)">
+                                            <div class="website-type-header">
+                                                <div class="website-type-name">Business Website</div>
+                                                <div class="website-type-price">₹11,000 - ₹60,000</div>
+                                            </div>
+                                            <div class="website-type-description">
+                                                Corporate website with multiple pages, contact forms, and business information
+                                            </div>
+                                        </div>
+
+                                        <div class="website-type-option" onclick="selectWebsiteType('custom', this)">
+                                            <div class="website-type-header">
+                                                <div class="website-type-name">Custom Application</div>
+                                                <div class="website-type-price">Custom Quote</div>
+                                            </div>
+                                            <div class="website-type-description">
+                                                Custom web applications with advanced functionality and database integration
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="websiteType" required>
+                                </div>
+
+                                <!-- UPDATED: Complexity Level - Auto-set for WWW and E-commerce -->
                                 <div class="form-group">
                                     <label for="complexity">Complexity Level *</label>
                                     <select id="complexity" class="form-control" required>
@@ -345,17 +497,30 @@
                                         <option value="complex">Complex (20+ pages) - ₹60,000</option>
                                     </select>
                                 </div>
+
+                                <!-- Project Category -->
+                                <div class="form-group">
+                                    <label for="category">Project Category *</label>
+                                    <select id="category" class="form-control" required>
+                                        <option value="">Select</option>
+                                        <option>Website Development</option>
+                                        <option>AI + IoT Project</option>
+                                        <option>Health Kiosk</option>
+                                        <option>Mobile App</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="websiteName">Website Name *</label>
-                                <input type="text" id="websiteName" class="form-control" required placeholder="Enter your website name">
+                                <label for="websiteName">Website/Project Name *</label>
+                                <input type="text" id="websiteName" class="form-control" required placeholder="Enter your website or project name">
                             </div>
 
                             <div class="form-group">
-                                <label for="description">Website Requirements Description *</label>
-                                <textarea id="description" class="form-control" required placeholder="Describe your website requirements in detail. Include:
-• Purpose of the website
+                                <label for="description">Project Requirements Description *</label>
+                                <textarea id="description" class="form-control" required placeholder="Describe your project requirements in detail. Include:
+• Purpose of the project
 • Target audience
 • Features needed (contact form, gallery, blog, etc.)
 • Design preferences
@@ -435,17 +600,23 @@
                                 </div>
                             </div>
 
+                            <!-- UPDATED: Payment Information -->
                             <div class="payment-info">
                                 <div class="info-card">
                                     <i class="fas fa-credit-card"></i>
                                     <div class="info-content">
                                         <h4>Payment Information</h4>
-                                        <p><strong>50% Advance Payment:</strong> Required to start the project</p>
-                                        <p><strong>50% Final Payment:</strong> Before project delivery</p>
+                                        <p><strong>40% Advance Payment:</strong> Required to start the project</p>
+                                        <p><strong>60% Final Payment:</strong> Before project delivery</p>
                                         <p><strong>Contact:</strong> 9448749572 for payment details</p>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Login notice -->
+                            <p id="loginNotice" style="display: none; color: red; text-align: center;">
+                                ⚠️ Please login before submitting a project.
+                            </p>
 
                             <div class="form-info">
                                 <i class="fas fa-info-circle"></i>
@@ -454,10 +625,12 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-submit">
-                                <i class="fas fa-paper-plane"></i>
-                                Submit Project Request
-                            </button>
+                            <div class="form-actions">
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-submit btn-block">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Submit Project Request
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -502,7 +675,8 @@
                             </div>
                             <h3>Call Us</h3>
                             <p>+91 9448749572</p>
-                            <small>Available 24/7</small>
+                            <!-- UPDATED: Business Hours -->
+                            <small>Monday to Saturday: 4PM to 9PM</small>
                         </div>
 
                         <div class="contact-card">
@@ -519,8 +693,9 @@
                                 <i class="fas fa-clock"></i>
                             </div>
                             <h3>Business Hours</h3>
-                            <p>Monday - Sunday</p>
-                            <small>24/7 Available</small>
+                            <p>Monday - Saturday</p>
+                            <!-- UPDATED: Business Hours -->
+                            <small>4:00 PM - 9:00 PM</small>
                         </div>
                     </div>
 
@@ -557,12 +732,42 @@
 
     <script>
         let uploadedFiles = [];
+        let selectedWebsiteType = '';
+
+        // Website Type Selection Function
+        function selectWebsiteType(type, element) {
+            // Remove selected class from all options
+            document.querySelectorAll('.website-type-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Set the hidden input value
+            selectedWebsiteType = type;
+            document.getElementById('websiteType').value = type;
+            
+            // Auto-set complexity for WWW and E-commerce
+            const complexitySelect = document.getElementById('complexity');
+            if (type === 'www' || type === 'ecommerce') {
+                complexitySelect.value = 'medium';
+                complexitySelect.disabled = true;
+            } else {
+                complexitySelect.disabled = false;
+                if (!complexitySelect.value) {
+                    complexitySelect.value = '';
+                }
+            }
+        }
 
         // Check if user is logged in and adjust menu
         function checkAuthStatus() {
             const authButtons = document.getElementById('authButtons');
             const userInfo = document.getElementById('userInfo');
             const userNameDisplay = document.getElementById('userNameDisplay');
+            const submitBtn = document.getElementById('submitBtn');
+            const loginNotice = document.getElementById('loginNotice');
             
             const isLoggedIn = {{ 'true' if username else 'false' }};
             const username = '{{ username if username else "" }}';
@@ -571,9 +776,17 @@
                 authButtons.style.display = 'none';
                 userInfo.style.display = 'flex';
                 userNameDisplay.textContent = username;
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+                submitBtn.style.cursor = "pointer";
+                loginNotice.style.display = 'none';
             } else {
                 authButtons.style.display = 'flex';
                 userInfo.style.display = 'none';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = "0.5";
+                submitBtn.style.cursor = "not-allowed";
+                loginNotice.style.display = 'block';
             }
         }
 
@@ -668,7 +881,7 @@
             uploadedFiles.forEach(file => addFilePreview(file));
         }
 
-        // Project form submission - UPDATED TO REDIRECT TO SUCCESS PAGE
+        // Project form submission
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -679,11 +892,21 @@
                 window.location.href = '/login';
                 return;
             }
+
+            // Validate website type selection
+            if (!selectedWebsiteType) {
+                alert('Please select a website type');
+                return;
+            }
             
             const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked').value;
             
             const formData = {
-                websiteType: document.getElementById('websiteType').value,
+                userName: document.getElementById('userName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                category: document.getElementById('category').value,
+                websiteType: selectedWebsiteType,
                 complexity: document.getElementById('complexity').value,
                 websiteName: document.getElementById('websiteName').value,
                 description: document.getElementById('description').value,
@@ -816,24 +1039,5 @@
             loadUserProjects();
         });
     </script>
-
-    <style>
-        /* Add these styles to your CSS for the portfolio section */
-        .project-links {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-        }
-
-        .portfolio-card .btn {
-            margin-top: 1rem;
-        }
-    </style>
 </body>
 </html>
