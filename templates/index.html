@@ -215,6 +215,20 @@
             color: #718096;
             font-size: 0.9rem;
         }
+
+        /* Error message styling */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #e53e3e;
+        }
     </style>
 </head>
 <body>
@@ -375,6 +389,7 @@
                 </div>
 
                 <div class="portfolio-grid">
+                    <!-- Portfolio cards remain the same -->
                     <div class="portfolio-card">
                         <div class="portfolio-image">
                             <img src="https://via.placeholder.com/400x250/667eea/ffffff?text=Health+Kiosk" alt="Health Kiosk">
@@ -498,19 +513,22 @@
                                 <div class="form-group">
                                     <label for="userName">Your Name *</label>
                                     <input type="text" id="userName" class="form-control" value="{{ user_name if user_name else '' }}" required>
+                                    <div class="error-message" id="userNameError">Please enter your name</div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email *</label>
                                     <input type="email" id="email" class="form-control" value="{{ user_email if user_email else '' }}" required>
+                                    <div class="error-message" id="emailError">Please enter a valid email</div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="phone">Phone *</label>
                                     <input type="tel" id="phone" class="form-control" required>
+                                    <div class="error-message" id="phoneError">Please enter your phone number</div>
                                 </div>
 
-                                <!-- FIXED: Website Type Selection -->
+                                <!-- Website Type Selection -->
                                 <div class="form-group full-width">
                                     <label for="websiteType">Website Type *</label>
                                     <div class="website-type-options">
@@ -567,9 +585,7 @@
                                         </div>
                                     </div>
                                     <input type="hidden" id="websiteType" required>
-                                    <div id="websiteTypeError" style="color: red; font-size: 0.9rem; margin-top: 0.5rem; display: none;">
-                                        Please select a website type
-                                    </div>
+                                    <div class="error-message" id="websiteTypeError">Please select a website type</div>
                                 </div>
 
                                 <!-- Complexity Level -->
@@ -581,6 +597,7 @@
                                         <option value="medium">Medium (11-20 pages) - ₹25,000</option>
                                         <option value="complex">Complex (20+ pages) - ₹60,000</option>
                                     </select>
+                                    <div class="error-message" id="complexityError">Please select complexity level</div>
                                 </div>
 
                                 <!-- Project Category -->
@@ -588,30 +605,26 @@
                                     <label for="category">Project Category *</label>
                                     <select id="category" class="form-control" required>
                                         <option value="">Select</option>
-                                        <option>Website Development</option>
-                                        <option>AI + IoT Project</option>
-                                        <option>Health Kiosk</option>
-                                        <option>Mobile App</option>
-                                        <option>Other</option>
+                                        <option value="Website Development">Website Development</option>
+                                        <option value="AI + IoT Project">AI + IoT Project</option>
+                                        <option value="Health Kiosk">Health Kiosk</option>
+                                        <option value="Mobile App">Mobile App</option>
+                                        <option value="Other">Other</option>
                                     </select>
+                                    <div class="error-message" id="categoryError">Please select project category</div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="websiteName">Website/Project Name *</label>
                                 <input type="text" id="websiteName" class="form-control" required placeholder="Enter your website or project name">
+                                <div class="error-message" id="websiteNameError">Please enter website/project name</div>
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Project Requirements Description *</label>
-                                <textarea id="description" class="form-control" required placeholder="Describe your project requirements in detail. Include:
-• Purpose of the project
-• Target audience
-• Features needed (contact form, gallery, blog, etc.)
-• Design preferences
-• Color scheme preferences
-• Any specific functionality
-• Reference websites (if any)" rows="8"></textarea>
+                                <textarea id="description" class="form-control" required placeholder="Describe your project requirements in detail..." rows="8"></textarea>
+                                <div class="error-message" id="descriptionError">Please enter project description</div>
                                 <small class="form-hint">Please be as detailed as possible. Additional edits after 2 revisions will cost ₹5,000 each.</small>
                             </div>
 
@@ -683,6 +696,7 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div class="error-message" id="deliveryOptionError">Please select delivery option</div>
                             </div>
 
                             <!-- Payment Information -->
@@ -832,7 +846,7 @@
             document.getElementById('websiteType').value = type;
             
             // Hide error message
-            document.getElementById('websiteTypeError').style.display = 'none';
+            hideError('websiteTypeError');
             
             // Auto-set complexity for WWW and E-commerce
             const complexitySelect = document.getElementById('complexity');
@@ -845,6 +859,78 @@
                     complexitySelect.value = '';
                 }
             }
+        }
+
+        // Helper function to show error
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const fieldElement = document.getElementById(fieldId);
+            if (errorElement && fieldElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                fieldElement.parentElement.classList.add('error');
+            }
+        }
+
+        // Helper function to hide error
+        function hideError(fieldId) {
+            const errorElement = document.getElementById(fieldId);
+            const fieldElement = document.getElementById(fieldId.replace('Error', ''));
+            if (errorElement && fieldElement) {
+                errorElement.style.display = 'none';
+                fieldElement.parentElement.classList.remove('error');
+            }
+        }
+
+        // Validate form function
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear all errors first
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+
+            // Check website type
+            if (!selectedWebsiteType) {
+                showError('websiteType', 'Please select a website type');
+                isValid = false;
+            }
+
+            // Check all required fields
+            const requiredFields = [
+                'userName', 'email', 'phone', 'category', 
+                'websiteName', 'description', 'complexity'
+            ];
+            
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (!element || !element.value.trim()) {
+                    const fieldName = field.replace(/([A-Z])/g, ' $1').toLowerCase();
+                    showError(field, `Please enter ${fieldName}`);
+                    isValid = false;
+                }
+            });
+
+            // Check email format
+            const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            // Check delivery option
+            const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
+            if (!deliveryOption) {
+                showError('deliveryOption', 'Please select a delivery option');
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         // Check if user is logged in and adjust menu
@@ -982,7 +1068,7 @@
         }
 
         // FIXED: Project form submission
-        document.getElementById('projectForm').addEventListener('submit', function(e) {
+        document.getElementById('projectForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const isLoggedIn = {{ 'true' if username else 'false' }};
@@ -993,36 +1079,14 @@
                 return;
             }
 
-            // Validate website type selection
-            if (!selectedWebsiteType) {
-                document.getElementById('websiteTypeError').style.display = 'block';
-                alert('Please select a website type');
+            // Validate form
+            if (!validateForm()) {
                 return;
             }
 
-            // Validate all required fields
-            const requiredFields = [
-                'userName', 'email', 'phone', 'category', 
-                'websiteName', 'description', 'complexity'
-            ];
-            
-            for (let field of requiredFields) {
-                const element = document.getElementById(field);
-                if (!element || !element.value.trim()) {
-                    const fieldName = field.replace(/([A-Z])/g, ' $1').toLowerCase();
-                    alert(`Please fill in the ${fieldName} field`);
-                    if (element) element.focus();
-                    return;
-                }
-            }
-
-            // Validate delivery option
             const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
-            if (!deliveryOption) {
-                alert('Please select a delivery option');
-                return;
-            }
             
+            // Prepare form data according to backend expectations
             const formData = {
                 userName: document.getElementById('userName').value,
                 email: document.getElementById('email').value,
@@ -1041,35 +1105,32 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
-            fetch('/api/projects', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
                 if (data.success) {
-                    // Redirect to success page with project ID
+                    // Success - redirect to success page
                     window.location.href = '/success/' + data.projectId;
                 } else {
-                    alert('Error: ' + (data.error || 'Unknown error occurred'));
+                    // Show server error
+                    alert('Error: ' + (data.error || 'Failed to submit project'));
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error submitting project. Please check your connection and try again.');
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('Network error. Please check your connection and try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
-            });
+            }
         });
 
         // Load user projects
@@ -1156,6 +1217,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkAuthStatus();
             loadUserProjects();
+            
+            // Add real-time validation
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                element.addEventListener('input', function() {
+                    hideError(this.id + 'Error');
+                });
+            });
         });
     </script>
 </body>
